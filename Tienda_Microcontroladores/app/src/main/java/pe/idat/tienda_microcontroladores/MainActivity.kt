@@ -19,12 +19,11 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             Tienda_MicrocontroladoresTheme {
-
+                LoginScreen()
             }
         }
     }
 }
-
 
 
 @Preview(showBackground = true)
