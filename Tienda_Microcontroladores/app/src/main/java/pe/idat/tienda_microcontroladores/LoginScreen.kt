@@ -1,6 +1,7 @@
 package pe.idat.tienda_microcontroladores
 
 import android.app.Activity
+import android.util.Patterns
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,6 +21,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -40,15 +42,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.intellij.lang.annotations.Pattern
 
 @Composable
 fun LoginScreen() {
     Box(
         Modifier
             .fillMaxSize()
-            .padding(8.dp)
+            .padding(26.dp)
     ) {
         Header(Modifier.align(Alignment.TopEnd))
         Body(Modifier.align(Alignment.Center))
@@ -98,9 +103,15 @@ fun Body(modifier: Modifier) {
     Column(modifier = modifier) {
         ImageLogo(Modifier.align(Alignment.CenterHorizontally))
         Spacer(modifier = Modifier.size(16.dp))
-        Email(email) { email = it }
+        Email(email) {
+            email = it
+            isLoginEnable = enableLogin(email, password)
+        }
         Spacer(modifier = Modifier.size(8.dp))
-        Password(password) { password = it }
+        Password(password) {
+            password = it
+            isLoginEnable = enableLogin(email, password)
+        }
         Spacer(modifier = Modifier.size(8.dp))
         ForgotPassword(Modifier.align(Alignment.End))
         Spacer(modifier = Modifier.size(16.dp))
@@ -112,13 +123,23 @@ fun Body(modifier: Modifier) {
 
 @Composable
 fun LoginButton(loginEnable: Boolean) {
-    Button(onClick = { }, enabled = loginEnable, modifier = Modifier.fillMaxWidth()) {
+    Button(
+        onClick = { },
+        enabled = loginEnable,
+        modifier = Modifier.fillMaxWidth(),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color(0xFF4EA8E9),
+            disabledContainerColor = Color(0xFF78C8F9),
+            contentColor = Color.White,
+            disabledContentColor = Color.White
+
+        )) {
         Text(text = "Log In")
 
     }
-
-
 }
+fun enableLogin(email: String, password: String) =
+    Patterns.EMAIL_ADDRESS.matcher(email).matches() && password.length > 6
 
 @Composable
 fun ForgotPassword(modifier: Modifier) {
@@ -163,6 +184,11 @@ fun Password(password: String, onTextChanged: (String) -> Unit) {
                 
             }
 
+        },
+        visualTransformation = if (passwordVisibility){
+            VisualTransformation.None
+        }else{
+            PasswordVisualTransformation()
         }
     )
 }
@@ -181,7 +207,6 @@ fun Email(email: String, onTextChanged: (String) -> Unit) {
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
         colors = TextFieldDefaults.textFieldColors(
-           // textColor = Color(0xFF2B2B2B),
             containerColor = Color(0xFFFAFAFA),
             unfocusedIndicatorColor = Color.Transparent,
             focusedIndicatorColor = Color.Transparent
